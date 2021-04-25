@@ -11,12 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: rpm install and build webpack
+    - name: npm install and build webpack
       run: |
         npm install
         npm run build
+    - uses: actions/upload-artifact@main
+      with:
+        name: webpack artifacts
+        path: public/
         
   test:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,6 +31,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@main  
+        with:
+          name: webpack artifacts
+          path: public     
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
